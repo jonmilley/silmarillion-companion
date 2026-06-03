@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Companion to The Silmarillion</title>
+<meta name="description" content="A reader's companion to J.R.R. Tolkien's The Silmarillion — chapter tracker, who's who, lexicon, timeline, family trees, a map of Beleriand, and a pronunciation guide.">
+<meta name="theme-color" content="#070b16">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Silmarillion">
+
+<!-- Open Graph / sharing -->
+<meta property="og:title" content="A Companion to The Silmarillion">
+<meta property="og:description" content="A reader's companion to Tolkien's First Age: track your chapters, untangle the names, and chart Beleriand.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="stars"></div>
+<div id="stars2"></div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">A Reader's Companion</div>
+    <h1>The Silmarillion</h1>
+    <div class="sub">Charting the light of the Trees, the Jewels, and the long defeat &mdash; J.R.R. Tolkien</div>
+    <div class="divider"><span class="l"></span><span class="star">✦</span><span class="r"></span></div>
+  </header>
+
+  <nav>
+    <div class="tabs">
+      <button class="tab active" data-tab="begin">Begin</button>
+      <button class="tab" data-tab="tale">The Tale</button>
+      <button class="tab" data-tab="who">Who's Who</button>
+      <button class="tab" data-tab="lexicon">Lexicon</button>
+      <button class="tab" data-tab="timeline">Timeline</button>
+      <button class="tab" data-tab="trees">Family Trees</button>
+      <button class="tab" data-tab="map">Map of Beleriand</button>
+      <button class="tab" data-tab="names">Speaking the Names</button>
+    </div>
+    <div class="search-row">
+      <div class="search-box" id="searchBox">
+        <span class="glyph">✦</span>
+        <input id="searchInput" type="text" autocomplete="off" spellcheck="false"
+               placeholder="Search names, places, chapters…" aria-label="Search the companion">
+        <button class="search-clear" id="searchClear" type="button" aria-label="Clear search">×</button>
+        <div class="search-results" id="searchResults" role="listbox"></div>
+      </div>
+      <button class="btn print-btn" id="printBtn" type="button" title="Print or save the current tab as a PDF">⎙ Print</button>
+    </div>
+  </nav>
+
+  <!-- ============ BEGIN ============ -->
+  <section class="panel active" id="begin">
+    <h2>Before You Set Out</h2>
+    <p class="lead">A few things worth knowing before the first page &mdash; they spare most readers the frustration that makes people give up.</p>
+
+    <div class="card">
+      <h3>What this book actually is</h3>
+      <p>The Silmarillion is not a novel like The Lord of the Rings. It's the mythology <em>behind</em> it &mdash; the creation of the world, the wars of the First Age, and the long history the hobbits only glimpse. It's written in the high, distant voice of scripture or legend: sweeping, formal, and full of names. That register is deliberate. If you expect a single hero and a tidy plot, you'll fight the book; if you read it the way you'd read myth or the opening of Genesis, it opens up.</p>
+    </div>
+
+    <ul class="card tips">
+      <li><strong>Don't try to memorize the names.</strong> On a first read, let them flow past you. The ones that matter return again and again until they stick on their own. Looking up beats re-reading.</li>
+      <li><strong>The first two parts are the hardest &mdash; and the shortest.</strong> The Ainulindalë and Valaquenta are dense, list-heavy, and have almost no story. Treat them as a prologue. If you stall, skim and push on to the real narrative; you can always circle back once the world makes sense.</li>
+      <li><strong>Keep a map of the family open.</strong> Half the confusion is the Elves all having similar F-names (Finwë, Fëanor, Fingolfin, Finarfin, Finrod). The Who's Who tab here, or the book's own genealogies, will keep them straight.</li>
+      <li><strong>Follow the Jewels.</strong> The Silmarils are the thread through the entire maze. Nearly every disaster traces back to them &mdash; keep one eye on where they are and who wants them.</li>
+      <li><strong>Read the hard names aloud.</strong> They were built by a philologist to be spoken. Saying "Fëanor" or "Lúthien" out loud makes them memorable and far less intimidating. (See the Speaking the Names tab.)</li>
+      <li><strong>Aim for the peaks.</strong> Beren and Lúthien and the tale of Túrin are the emotional heart of the book and read most like proper stories. When the going feels dry, these are what you're climbing toward.</li>
+    </ul>
+
+    <h2 style="margin-top:36px">The Shape of the Book</h2>
+    <p class="lead">Five parts, very uneven in length. Knowing the structure tells you where you are.</p>
+    <div class="card struct">
+      <div class="row"><span class="num">I</span><div><span class="nm">Ainulindalë</span> &mdash; <span class="gloss">"The Music of the Ainur." The world is sung into being, and discord enters it. Very short.</span></div></div>
+      <div class="row"><span class="num">II</span><div><span class="nm">Valaquenta</span> &mdash; <span class="gloss">"Account of the Valar." A who's-who of the godlike Powers and their servants. A reference, not a story.</span></div></div>
+      <div class="row"><span class="num">III</span><div><span class="nm">Quenta Silmarillion</span> &mdash; <span class="gloss">"The History of the Silmarils." The main event: 24 chapters covering the whole First Age. This is the book.</span></div></div>
+      <div class="row"><span class="num">IV</span><div><span class="nm">Akallabêth</span> &mdash; <span class="gloss">"The Downfall of Númenor." The rise and drowning of the great island kingdom of Men. Second Age.</span></div></div>
+      <div class="row"><span class="num">V</span><div><span class="nm">Of the Rings of Power</span> &mdash; <span class="gloss">How the Rings were forged and Sauron rose &mdash; the bridge straight into The Lord of the Rings.</span></div></div>
+    </div>
+    <p style="text-align:center;color:var(--silver-deep);font-style:italic;margin-top:20px">When you're ready, open <strong style="color:var(--gold);font-style:normal;font-family:'Cinzel',serif;font-weight:500">The Tale</strong> to track your way through, chapter by chapter.</p>
+  </section>
+
+  <!-- ============ THE TALE (TRACKER) ============ -->
+  <section class="panel" id="tale">
+    <h2>The Tale, Chapter by Chapter</h2>
+    <p class="lead">Tap each chapter as you finish it &mdash; your progress is saved between visits. Add a note to any chapter to jot a thought. Each line is a spoiler-light signpost for what that chapter is about.</p>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-top"><span>Your Journey</span><span class="pct" id="pct">0 / 0</span></div>
+      <div class="bar"><i id="barFill"></i></div>
+      <button class="reset" id="resetBtn">reset progress</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn" id="exportBtn" type="button">✧ Export progress</button>
+      <button class="btn" id="importBtn" type="button">✧ Import progress</button>
+      <button class="btn primary" id="installBtn" type="button">✦ Install app</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+
+    <div id="trackerRoot"></div>
+  </section>
+
+  <!-- ============ WHO'S WHO ============ -->
+  <section class="panel" id="who">
+    <h2>Who's Who</h2>
+    <p class="lead">The cast is enormous, but you only need to hold a couple of dozen in your head. Here are the ones who carry the story.</p>
+    <div id="whoRoot"></div>
+  </section>
+
+  <!-- ============ LEXICON ============ -->
+  <section class="panel" id="lexicon">
+    <h2>Lexicon</h2>
+    <p class="lead">The handful of words and places everything else hangs on.</p>
+    <div class="card"><dl class="lex" id="lexRoot"></dl></div>
+  </section>
+
+  <!-- ============ NAMES ============ -->
+  <section class="panel" id="names">
+    <h2>Speaking the Names</h2>
+    <p class="lead">Tolkien gave careful guidance on pronunciation (it's in the book's appendix). A few rules unlock almost everything.</p>
+    <div class="card" id="rulesRoot"></div>
+
+    <div class="card">
+      <h3>A few names to practise aloud</h3>
+      <div class="name-bank" id="bankRoot"></div>
+      <p style="margin-top:16px;font-style:italic;color:var(--silver-deep);font-size:16px">These are friendly approximations, not strict phonetics &mdash; say them with confidence and you'll be close enough.</p>
+    </div>
+  </section>
+
+  <!-- ============ TIMELINE ============ -->
+  <section class="panel" id="timeline">
+    <h2>A Chronicle of the First Age</h2>
+    <p class="lead">Time before the Sun was counted in the Years of the Trees; afterward, in Years of the Sun. This is the order events fall in &mdash; a frame to hang the chapters on. (Light spoilers, by nature.)</p>
+    <div id="timelineRoot"></div>
+  </section>
+
+  <!-- ============ FAMILY TREES ============ -->
+  <section class="panel" id="trees">
+    <h2>The Tangled Houses</h2>
+    <p class="lead">Two lineages cause most of the confusion &mdash; and carry most of the meaning. Untangle these and the book clicks into place.</p>
+    <div id="treesRoot"></div>
+  </section>
+
+  <!-- ============ MAP ============ -->
+  <section class="panel" id="map">
+    <h2>The Land of Beleriand</h2>
+    <p class="lead">A schematic of the northwest of Middle-earth in the First Age &mdash; not to scale, but true to where things sit relative to one another. Tap a marked place to learn what it is.</p>
+    <div class="card" style="padding:14px">
+      <div id="mapHolder"></div>
+      <div id="mapCaption" style="margin-top:14px;min-height:48px;padding:12px 14px;border-radius:10px;background:rgba(230,192,104,.06);border:1px solid var(--line);font-style:italic;color:var(--ink-dim)">Tap a gold marker on the map to read about it.</div>
+    </div>
+    <p style="text-align:center;color:var(--silver-deep);font-style:italic;margin-top:16px;font-size:16px">North is up. The Great Sea lies west; the Blue Mountains wall off the east. Nearly all of this land is broken and drowned by the end of the Age.</p>
+  </section>
+
+  <footer>✦ &nbsp;Made for a summer among the Eldar. May your road wind ever toward the Sea. &nbsp;✦</footer>
+</div>
+
+<div id="toast"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

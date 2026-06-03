@@ -1,0 +1,13 @@
+# Local Claude Code settings
+.claude/
+
+# Playwright / test artifacts
+.playwright-mcp/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+
+# Dependencies (none currently, but just in case)
+node_modules/

@@ -1,0 +1,26 @@
+{
+  "name": "A Companion to The Silmarillion",
+  "short_name": "Silmarillion",
+  "description": "A reader's companion to Tolkien's First Age: chapter tracker, who's who, lexicon, timeline, family trees, and a map of Beleriand.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#070b16",
+  "theme_color": "#070b16",
+  "categories": ["books", "education", "reference"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
