@@ -148,11 +148,22 @@ const RULES = [
   ['final E', 'Always pronounced, never silent. "Manwë" = MAN-weh; "Finwë" = FIN-weh.'],
   ['á é í', 'Accents just mean the vowel is held longer — not stressed differently.'],
 ];
+/* [display name, written guide, what the speech synthesizer is fed].
+   The third form respells the name from plain English sounds, because
+   TTS engines mangle the Elvish spelling itself. */
 const BANK = [
-  ['Fëanor', 'FEH-ah-nor'], ['Lúthien', 'LOO-thee-en'], ['Eärendil', 'eh-AR-en-dil'],
-  ['Fingolfin', 'fin-GOL-fin'], ['Thingol', 'THING-gol'], ['Maedhros', 'MIE-thros'],
-  ['Galadriel', 'ga-LAD-ree-el'], ['Túrin', 'TOO-rin'], ['Melkor', 'MEL-kor'],
-  ['Telperion', 'tel-PEH-ree-on'], ['Doriath', 'DOR-ee-ath'], ['Gondolin', 'GON-do-lin'],
+  ['Fëanor', 'FEH-ah-nor', 'feh-ah-nor'],
+  ['Lúthien', 'LOO-thee-en', 'loo-thee-en'],
+  ['Eärendil', 'eh-AR-en-dil', 'eh-are-en-dill'],
+  ['Fingolfin', 'fin-GOL-fin', 'fin-goll-fin'],
+  ['Thingol', 'THING-gol', 'thing-goll'],
+  ['Maedhros', 'MIE-thros', 'my-thross'],
+  ['Galadriel', 'ga-LAD-ree-el', 'gah-lad-ree-ell'],
+  ['Túrin', 'TOO-rin', 'too-rin'],
+  ['Melkor', 'MEL-kor', 'mel-core'],
+  ['Telperion', 'tel-PEH-ree-on', 'tell-pair-ee-on'],
+  ['Doriath', 'DOR-ee-ath', 'door-ee-ath'],
+  ['Gondolin', 'GON-do-lin', 'gone-doh-lin'],
 ];
 
 /* ---------- timeline ----------

@@ -176,9 +176,17 @@ h2{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(22px,4vw,30px);col
 .rule .letter{font-family:'Cinzel',serif;color:var(--gold);font-size:22px;text-align:center}
 .rule .ex{color:var(--silver)}
 .name-bank{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.chip{background:rgba(15,22,40,.8);border:1px solid var(--line);border-radius:10px;padding:9px 14px}
+.chip{background:rgba(15,22,40,.8);border:1px solid var(--line);border-radius:10px;padding:9px 14px;
+  font:inherit;color:inherit;text-align:left;cursor:default;transition:.2s}
 .chip b{font-family:'Cinzel',serif;color:var(--silver);font-weight:500;font-size:15px}
 .chip span{color:var(--gold);font-style:italic;display:block;font-size:15px}
+.chip .play{display:inline;color:var(--silver-deep);font-style:normal;font-size:9px;margin-left:8px;
+  vertical-align:2px;transition:.2s}
+.chip.speakable{cursor:pointer}
+.chip.speakable:hover{border-color:rgba(230,192,104,.4)}
+.chip.speakable:hover .play{color:var(--gold)}
+.chip.speaking{border-color:rgba(230,192,104,.55);box-shadow:0 0 14px rgba(230,192,104,.3)}
+.chip.speaking .play{color:var(--gold);filter:drop-shadow(0 0 5px rgba(230,192,104,.7))}
 
 /* ---------- timeline ---------- */
 .era-head{font-family:'Cinzel',serif;color:var(--gold);font-size:14px;letter-spacing:.18em;
@@ -318,7 +326,8 @@ footer{text-align:center;margin-top:60px;padding-top:24px;border-top:1px solid v
 
   /* hide interactive chrome */
   #stars,#stars2,nav,#toast,.toolbar,.reset,.search-results,
-  .eyebrow,.divider,.chap .note-toggle,.refchips,.shield-row,.next-up{ display:none !important; }
+  .eyebrow,.divider,.chap .note-toggle,.refchips,.shield-row,.next-up,
+  .chip .play,#ttsHint{ display:none !important; }
 
   /* veiled timeline events print as placeholders, not spoilers */
   .tl .ev.veiled .when,.tl .ev.veiled .what{ visibility:hidden; }

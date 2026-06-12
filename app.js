@@ -341,12 +341,42 @@ $('#importFile').addEventListener('change', e => {
     `<dt id="lex-${slug(t)}">${t}</dt><dd>${d}</dd>`).join('');
 })();
 
-/* ---------- render: names ---------- */
+/* ---------- render: names (with tap-to-hear via the Web Speech API) ---------- */
 (function () {
   $('#rulesRoot').innerHTML = RULES.map(([l, e]) =>
     `<div class="rule"><div class="letter">${l}</div><div class="ex">${e}</div></div>`).join('');
-  $('#bankRoot').innerHTML = BANK.map(([n, p]) =>
-    `<div class="chip" id="bank-${slug(n)}"><b>${n}</b><span>${p}</span></div>`).join('');
+
+  const canSpeak = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+
+  $('#bankRoot').innerHTML = BANK.map(([n, p, tts]) =>
+    `<button class="chip${canSpeak ? ' speakable' : ''}" id="bank-${slug(n)}" data-tts="${tts}"
+       type="button"${canSpeak ? ' title="Tap to hear"' : ''}>
+       <b>${n}${canSpeak ? '<span class="play" aria-hidden="true">▶</span>' : ''}</b><span>${p}</span>
+     </button>`).join('');
+
+  if (!canSpeak) { $('#ttsHint')?.remove(); return; }
+
+  // Tolkien favoured British received pronunciation; prefer an en-GB voice.
+  let voice = null;
+  function pickVoice() {
+    const vs = speechSynthesis.getVoices();
+    voice = vs.find(v => /^en[-_]gb/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
+  }
+  pickVoice();
+  speechSynthesis.addEventListener?.('voiceschanged', pickVoice);
+
+  $('#bankRoot').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    speechSynthesis.cancel(); // stop any name still being spoken
+    const u = new SpeechSynthesisUtterance(chip.dataset.tts);
+    if (voice) u.voice = voice;
+    u.lang = (voice && voice.lang) || 'en-GB';
+    u.rate = 0.8; // slow enough to hear the syllables
+    u.onstart = () => chip.classList.add('speaking');
+    u.onend = u.onerror = () => chip.classList.remove('speaking');
+    speechSynthesis.speak(u);
+  });
 })();
 
 /* ---------- render: timeline (with spoiler shield) ---------- */

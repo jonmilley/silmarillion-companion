@@ -17,6 +17,10 @@ server, no accounts. All reading state lives in your own browser.
 - **Spoiler shield** — timeline events from chapters you haven't finished stay blurred
   until you mark the chapter read (tap any veiled event to peek; toggleable, and
   remembered).
+- **Hear the names** — on Speaking the Names, tap any name to hear it spoken via the
+  browser's built-in speech synthesis (no audio files, works offline). Each entry in
+  `BANK` in `data.js` carries a TTS-friendly respelling, since engines mangle the
+  Elvish spelling itself.
 - **Search** — one box searches names, places, chapters, lexicon, timeline, and
   pronunciations, and jumps you straight to the entry. (Arrow keys + Enter work too.)
 - **Resumes where you left off** — reopens on your last tab.
