@@ -7,8 +7,16 @@ server, no accounts. All reading state lives in your own browser.
 
 ## Features
 
-- **Chapter tracker** — tap chapters as you read; progress is saved locally.
+- **Chapter tracker** — tap chapters as you read; progress is saved locally, with the
+  date you finished each chapter. A "Next up" line under the progress bar always points
+  at your next unread chapter. Already mid-book? Long-press a chapter's star (or
+  shift-click it) to mark everything up to it as read.
 - **Per-chapter notes** — jot a thought on any chapter; saved alongside your progress.
+- **Names in this chapter** — each chapter lists the names worth knowing as tap-to-jump
+  chips into the Who's Who, Lexicon, or Map. (Edit a chapter's `refs` in `data.js`.)
+- **Spoiler shield** — timeline events from chapters you haven't finished stay blurred
+  until you mark the chapter read (tap any veiled event to peek; toggleable, and
+  remembered).
 - **Search** — one box searches names, places, chapters, lexicon, timeline, and
   pronunciations, and jumps you straight to the entry. (Arrow keys + Enter work too.)
 - **Resumes where you left off** — reopens on your last tab.

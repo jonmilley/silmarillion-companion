@@ -1,6 +1,6 @@
 /* Service worker — makes the Companion installable and fully usable offline.
    Bump CACHE when you change any cached asset so clients refresh.            */
-const CACHE = 'silmarillion-v2';
+const CACHE = 'silmarillion-v3';
 
 const ASSETS = [
   './',

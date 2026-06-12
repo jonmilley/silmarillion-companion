@@ -6,9 +6,10 @@
 
 /* ---------- storage layer (localStorage, with safe fallbacks) ---------- */
 const KEY = {
-  progress: 'silmarillion-progress',   // { chapterId: true }
+  progress: 'silmarillion-progress',   // { chapterId: true | epoch-ms when finished }
   notes:    'silmarillion-notes',      // { chapterId: "note text" }
   tab:      'silmarillion-tab',         // last active tab id
+  shield:   'silmarillion-shield',      // spoiler shield on the timeline (boolean)
 };
 const SCHEMA_VERSION = 1;
 
@@ -74,8 +75,34 @@ function activateTab(name, { scroll = true } = {}) {
 }
 $$('.tab').forEach(t => t.addEventListener('click', () => activateTab(t.dataset.tab)));
 
+/* ---------- name resolver (for per-chapter reference chips) ---------- */
+// Maps a name from a chapter's `refs` to where it lives in the Companion:
+// Who's Who first, then the Lexicon, then the Map. Unresolved names are skipped.
+const resolveRef = (() => {
+  const m = new Map();
+  const add = (name, target) => { const k = fold(name); if (!m.has(k)) m.set(k, target); };
+  WHO.forEach(g => g.people.forEach(p => {
+    add(p.n, { tab: 'who', sel: `#who-${slug(p.n)}` });
+    if (p.a) add(p.a, { tab: 'who', sel: `#who-${slug(p.n)}` });
+  }));
+  LEX.forEach(([t]) => add(t, { tab: 'lexicon', sel: `#lex-${slug(t)}` }));
+  Object.entries(PLACES).forEach(([id, txt]) =>
+    add(txt.split(/[—,(]/)[0].trim(), { tab: 'map', place: id }));
+  return name => m.get(fold(name));
+})();
+
 /* ---------- render: tracker (The Tale) ---------- */
 const allIds = SECTIONS.flatMap(s => s.chapters.map(c => c.id));
+const chapterById = {};
+SECTIONS.forEach(s => s.chapters.forEach(c => { chapterById[c.id] = c; }));
+
+function fmtDate(ts) {
+  if (typeof ts !== 'number') return '';   // legacy `true` from older saves — no date known
+  const d = new Date(ts);
+  const opts = { month: 'short', day: 'numeric' };
+  if (d.getFullYear() !== new Date().getFullYear()) opts.year = 'numeric';
+  return d.toLocaleDateString(undefined, opts);
+}
 
 function renderTracker() {
   let html = '';
@@ -86,12 +113,20 @@ function renderTracker() {
       const idx = c.n ? `<span class="cidx">${c.n}.</span>` : '';
       const note = notes[c.id] || '';
       const hasNote = note.trim() ? 'has-note' : '';
+      const date = fmtDate(progress[c.id]);
+      const chips = (c.refs || []).map(name => {
+        const r = resolveRef(name);
+        if (!r) return '';
+        const place = r.place ? ` data-place="${r.place}"` : '';
+        return `<button class="refchip" data-tab="${r.tab}" data-sel="${r.sel || ''}"${place} type="button">${esc(name)}</button>`;
+      }).join('');
       html += `
         <div class="chap ${done}" id="chap-${c.id}" data-id="${c.id}">
           <div class="mark" data-act="toggle">✦</div>
           <div class="body">
-            <span class="ttl" data-act="toggle">${idx}${esc(c.t)}</span>
+            <span class="ttl" data-act="toggle">${idx}${esc(c.t)}</span><span class="done-date">${date ? '· finished ' + date : ''}</span>
             <span class="desc">${esc(c.d)}</span>
+            ${chips ? `<div class="refchips">${chips}</div>` : ''}
             <button class="note-toggle ${hasNote}" data-act="note" type="button">
               <span class="dot"></span>${note.trim() ? 'note' : 'add note'}
             </button>
@@ -107,12 +142,40 @@ function renderTracker() {
   updateBar();
 }
 
+function setDoneDate(el, v) {
+  const date = fmtDate(v);
+  el.querySelector('.done-date').textContent = v && date ? '· finished ' + date : '';
+}
+
 function toggle(id) {
-  if (progress[id]) delete progress[id]; else progress[id] = true;
+  if (progress[id]) delete progress[id]; else progress[id] = Date.now();
   const el = document.querySelector(`.chap[data-id="${id}"]`);
   el.classList.toggle('done', !!progress[id]);
+  setDoneDate(el, progress[id]);
   store.set(KEY.progress, progress);
   updateBar();
+  renderTimeline();
+}
+
+/* mark this chapter and everything before it — for readers already partway in */
+function markUpTo(id) {
+  const end = allIds.indexOf(id);
+  if (end < 0) return;
+  const now = Date.now();
+  let added = 0;
+  for (let i = 0; i <= end; i++) {
+    if (!progress[allIds[i]]) { progress[allIds[i]] = now; added++; }
+  }
+  if (!added) { toast('Already marked up to here'); return; }
+  store.set(KEY.progress, progress);
+  for (let i = 0; i <= end; i++) {
+    const el = document.querySelector(`.chap[data-id="${allIds[i]}"]`);
+    el.classList.add('done');
+    setDoneDate(el, progress[allIds[i]]);
+  }
+  updateBar();
+  renderTimeline();
+  toast(`Marked ${added} chapter${added > 1 ? 's' : ''} read`);
 }
 
 function updateBar() {
@@ -120,19 +183,64 @@ function updateBar() {
   const total = allIds.length;
   $('#pct').textContent = `${done} / ${total}`;
   $('#barFill').style.width = (total ? (done / total * 100) : 0) + '%';
+
+  // point at the next unread chapter
+  const nextId = allIds.find(i => !progress[i]);
+  $$('.chap.next').forEach(el => el.classList.remove('next'));
+  const nu = $('#nextUp');
+  if (!nu) return;
+  if (!nextId) {
+    nu.innerHTML = 'The tale is told — every chapter read ✦';
+  } else {
+    const c = chapterById[nextId];
+    nu.innerHTML = `Next up: <button class="next-link" data-id="${nextId}" type="button">${c.n ? c.n + '. ' : ''}${esc(c.t)}</button>`;
+    const el = document.querySelector(`.chap[data-id="${nextId}"]`);
+    if (el) el.classList.add('next');
+  }
 }
 
-/* delegated clicks on the tracker (toggle + note open) */
+$('#nextUp')?.addEventListener('click', e => {
+  const link = e.target.closest('.next-link');
+  if (!link) return;
+  const target = document.querySelector(`.chap[data-id="${link.dataset.id}"]`);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
+});
+
+/* delegated clicks on the tracker (toggle + note open + reference chips) */
+let longPressFired = false;
 $('#trackerRoot').addEventListener('click', e => {
+  const chip = e.target.closest('.refchip');
+  if (chip) { goTo(chip.dataset.tab, chip.dataset.sel, chip.dataset.place); return; }
   const act = e.target.closest('[data-act]');
   if (!act) return;
   const chap = e.target.closest('.chap');
   const id = chap.dataset.id;
-  if (act.dataset.act === 'toggle') toggle(id);
+  if (act.dataset.act === 'toggle') {
+    if (longPressFired) { longPressFired = false; return; } // long-press already handled it
+    if (e.shiftKey && !progress[id]) markUpTo(id); else toggle(id);
+  }
   if (act.dataset.act === 'note') {
     chap.querySelector('.note-editor').classList.toggle('open');
     chap.querySelector('textarea').focus();
   }
+});
+
+/* long-press a chapter's star = mark up to here (touch equivalent of shift-click) */
+let lpTimer = null;
+$('#trackerRoot').addEventListener('pointerdown', e => {
+  const mark = e.target.closest('.mark');
+  if (!mark) return;
+  longPressFired = false;
+  const chap = e.target.closest('.chap');
+  clearTimeout(lpTimer);
+  lpTimer = setTimeout(() => { longPressFired = true; markUpTo(chap.dataset.id); }, 550);
+});
+['pointerup', 'pointercancel', 'pointerleave'].forEach(ev =>
+  $('#trackerRoot').addEventListener(ev, () => clearTimeout(lpTimer), true));
+$('#trackerRoot').addEventListener('contextmenu', e => {
+  if (e.target.closest('.mark')) e.preventDefault();
 });
 
 /* delegated, debounced note saving */
@@ -160,6 +268,7 @@ $('#resetBtn').addEventListener('click', () => {
   progress = {};
   store.set(KEY.progress, progress);
   renderTracker();
+  renderTimeline();
   toast('Progress reset');
 });
 
@@ -195,6 +304,7 @@ function importData(file) {
       store.set(KEY.progress, progress);
       store.set(KEY.notes, notes);
       renderTracker();
+      renderTimeline();
       toast('Progress imported');
     } catch (e) {
       toast('Could not read that file');
@@ -239,19 +349,52 @@ $('#importFile').addEventListener('change', e => {
     `<div class="chip" id="bank-${slug(n)}"><b>${n}</b><span>${p}</span></div>`).join('');
 })();
 
-/* ---------- render: timeline ---------- */
-(function () {
+/* ---------- render: timeline (with spoiler shield) ---------- */
+let shieldOn = store.get(KEY.shield, true);
+if (typeof shieldOn !== 'boolean') shieldOn = true;
+
+const CH_LABEL = {};
+SECTIONS.forEach(s => s.chapters.forEach(c => { CH_LABEL[c.id] = c.n ? `chapter ${c.n}` : `the ${c.t}`; }));
+
+function renderTimeline() {
   let html = '', i = 0;
   TIMELINE.forEach(g => {
     html += `<div class="era-head">${g.era}</div><div class="era-sub">${g.sub}</div><div class="tl">`;
     g.events.forEach(e => {
       const yr = e.y ? `<div class="yr">${e.y}</div>` : '';
-      html += `<div class="ev" id="tl-${i++}">${yr}<div class="when">${e.w}</div><div class="what">${e.x}</div></div>`;
+      const veiled = shieldOn && e.ch && !progress[e.ch];
+      const veil = veiled
+        ? `<button class="veil" type="button">✦ &nbsp;Veiled until you finish ${CH_LABEL[e.ch]} — tap to peek</button>`
+        : '';
+      html += `<div class="ev${veiled ? ' veiled' : ''}" id="tl-${i++}">${yr}<div class="when">${e.w}</div><div class="what">${e.x}</div>${veil}</div>`;
     });
     html += '</div>';
   });
   $('#timelineRoot').innerHTML = html;
-})();
+}
+
+/* tap a veil to peek at that one event (until the next re-render) */
+$('#timelineRoot').addEventListener('click', e => {
+  const veil = e.target.closest('.veil');
+  if (!veil) return;
+  veil.closest('.ev').classList.remove('veiled');
+  veil.remove();
+});
+
+function updateShieldBtn() {
+  const b = $('#shieldBtn');
+  if (!b) return;
+  b.setAttribute('aria-pressed', String(shieldOn));
+  b.textContent = shieldOn ? '✧ Spoiler shield: on' : '✧ Spoiler shield: off';
+  b.classList.toggle('primary', shieldOn);
+}
+$('#shieldBtn')?.addEventListener('click', () => {
+  shieldOn = !shieldOn;
+  store.set(KEY.shield, shieldOn);
+  updateShieldBtn();
+  renderTimeline();
+  toast(shieldOn ? 'Events beyond your progress are veiled' : 'All events revealed');
+});
 
 /* ---------- render: family trees ---------- */
 function renderNode(n) {
@@ -441,16 +584,15 @@ function runSearch(qRaw) {
   results.classList.add('open');
 }
 
-function jumpTo(el) {
-  activateTab(el.dataset.tab, { scroll: false });
-  closeSearch();
+function goTo(tab, sel, place) {
+  activateTab(tab, { scroll: false });
   setTimeout(() => {
-    if (el.dataset.place) {
-      selectPlace(el.dataset.place);
+    if (place) {
+      selectPlace(place);
       $('#map').scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    const target = el.dataset.sel ? document.querySelector(el.dataset.sel) : null;
+    const target = sel ? document.querySelector(sel) : null;
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
@@ -458,6 +600,11 @@ function jumpTo(el) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, 60);
+}
+
+function jumpTo(el) {
+  closeSearch();
+  goTo(el.dataset.tab, el.dataset.sel, el.dataset.place);
 }
 
 function closeSearch() {
@@ -532,4 +679,6 @@ if ('serviceWorker' in navigator) {
 
 /* ---------- init ---------- */
 renderTracker();
+renderTimeline();
+updateShieldBtn();
 activateTab(store.get(KEY.tab, 'begin') || 'begin', { scroll: false });

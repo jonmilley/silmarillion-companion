@@ -95,11 +95,12 @@
   <!-- ============ THE TALE (TRACKER) ============ -->
   <section class="panel" id="tale">
     <h2>The Tale, Chapter by Chapter</h2>
-    <p class="lead">Tap each chapter as you finish it &mdash; your progress is saved between visits. Add a note to any chapter to jot a thought. Each line is a spoiler-light signpost for what that chapter is about.</p>
+    <p class="lead">Tap each chapter as you finish it &mdash; your progress is saved between visits. Add a note to any chapter to jot a thought. Each line is a spoiler-light signpost for what that chapter is about, and the small chips beneath it jump to the names worth knowing. Already partway through the book? Long-press a chapter's star (or shift-click it) to mark everything up to it as read.</p>
 
     <div class="progress-bar-wrap">
       <div class="progress-top"><span>Your Journey</span><span class="pct" id="pct">0 / 0</span></div>
       <div class="bar"><i id="barFill"></i></div>
+      <div class="next-up" id="nextUp"></div>
       <button class="reset" id="resetBtn">reset progress</button>
     </div>
 
@@ -143,7 +144,10 @@
   <!-- ============ TIMELINE ============ -->
   <section class="panel" id="timeline">
     <h2>A Chronicle of the First Age</h2>
-    <p class="lead">Time before the Sun was counted in the Years of the Trees; afterward, in Years of the Sun. This is the order events fall in &mdash; a frame to hang the chapters on. (Light spoilers, by nature.)</p>
+    <p class="lead">Time before the Sun was counted in the Years of the Trees; afterward, in Years of the Sun. This is the order events fall in &mdash; a frame to hang the chapters on. While the spoiler shield is on, events from chapters you haven't yet marked as read stay veiled.</p>
+    <div class="shield-row">
+      <button class="btn" id="shieldBtn" type="button" aria-pressed="true">✧ Spoiler shield: on</button>
+    </div>
     <div id="timelineRoot"></div>
   </section>
 

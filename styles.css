@@ -103,6 +103,12 @@ h2{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(22px,4vw,30px);col
   background:none;border:none;cursor:pointer;text-decoration:underline dotted;margin-top:10px}
 .reset:hover{color:var(--gold)}
 
+/* next unread chapter, shown under the progress bar */
+.next-up{font-family:'EB Garamond',serif;font-style:italic;font-size:15px;color:var(--ink-dim);margin-top:10px}
+.next-up .next-link{font-family:'Cinzel',serif;font-style:normal;font-size:13px;letter-spacing:.04em;
+  color:var(--gold);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline dotted}
+.next-up .next-link:hover{color:var(--silver)}
+
 .sec-title{font-family:'Cinzel',serif;color:var(--gold);font-size:15px;letter-spacing:.18em;
   text-transform:uppercase;margin:30px 0 6px;display:flex;align-items:center;gap:12px}
 .sec-title::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -120,6 +126,16 @@ h2{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(22px,4vw,30px);col
 .chap.done .ttl{color:var(--gold)}
 .chap .desc{display:block;font-style:italic;color:var(--ink-dim);font-size:17px;margin-top:2px;line-height:1.5}
 .chap .cidx{font-family:'Cinzel',serif;color:var(--silver-deep);font-size:13px;margin-right:2px}
+.chap.next{border-color:rgba(138,166,200,.35);background:rgba(138,166,200,.05)}
+.chap .done-date{font-style:italic;color:var(--silver-deep);font-size:13px;margin-left:8px;white-space:nowrap}
+.chap .mark{user-select:none;-webkit-user-select:none;touch-action:manipulation}
+
+/* names-in-this-chapter chips */
+.refchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.refchip{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;color:var(--silver-deep);
+  background:rgba(138,166,200,.07);border:1px solid var(--line);border-radius:999px;
+  padding:3px 11px;cursor:pointer;transition:.2s}
+.refchip:hover{color:var(--gold);border-color:rgba(230,192,104,.4)}
 
 /* per-chapter notes */
 .chap .note-toggle{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
@@ -183,6 +199,14 @@ h2{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(22px,4vw,30px);col
   margin-bottom:7px;box-shadow:0 0 12px rgba(230,192,104,.25)}
 .tl .ev .what{color:var(--ink-dim);margin-top:2px}
 .tl .ev .what b{color:var(--ink);font-weight:600}
+
+/* spoiler shield */
+.shield-row{display:flex;justify-content:flex-end;margin:0 0 6px}
+.tl .ev.veiled .when,.tl .ev.veiled .what{filter:blur(7px);user-select:none;-webkit-user-select:none;pointer-events:none}
+.tl .ev .veil{position:absolute;inset:0;background:none;border:none;cursor:pointer;
+  color:var(--silver-deep);font-family:'EB Garamond',serif;font-style:italic;font-size:14.5px;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:0 14px;transition:.2s}
+.tl .ev .veil:hover{color:var(--gold)}
 
 /* ---------- family trees ---------- */
 .tree-note{font-style:italic;color:var(--ink-dim);margin-bottom:6px;font-size:17px}
@@ -294,7 +318,11 @@ footer{text-align:center;margin-top:60px;padding-top:24px;border-top:1px solid v
 
   /* hide interactive chrome */
   #stars,#stars2,nav,#toast,.toolbar,.reset,.search-results,
-  .eyebrow,.divider,.chap .note-toggle{ display:none !important; }
+  .eyebrow,.divider,.chap .note-toggle,.refchips,.shield-row,.next-up{ display:none !important; }
+
+  /* veiled timeline events print as placeholders, not spoilers */
+  .tl .ev.veiled .when,.tl .ev.veiled .what{ visibility:hidden; }
+  .tl .ev .veil{ position:static; display:block; color:#555; padding:0; }
 
   .wrap{ max-width:none; padding:0; }
   header{ padding:0 0 10px; text-align:left; border-bottom:1px solid var(--line); margin:0 0 16px; }
